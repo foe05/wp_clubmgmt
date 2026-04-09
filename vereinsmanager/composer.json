@@ -1,0 +1,10 @@
+{
+	"name": "broetzenstools/vereinsmanager",
+	"description": "Vereinsmanager – WordPress-Plugin für die Verwaltung gemeinnütziger Fördervereine.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=8.1",
+		"tecnickcom/tcpdf": "^6.6"
+	}
+}

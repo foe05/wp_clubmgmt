@@ -1,0 +1,133 @@
+/* Vereinsmanager Admin Styles */
+
+.vm-wrap {
+	max-width: 1200px;
+}
+
+.vm-cards {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin: 16px 0 24px;
+}
+
+.vm-card {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	padding: 16px 20px;
+	min-width: 180px;
+	flex: 1 1 180px;
+	box-shadow: 0 1px 1px rgba( 0, 0, 0, 0.04 );
+}
+
+.vm-card-wide {
+	flex: 1 1 100%;
+}
+
+.vm-card h3 {
+	margin: 0 0 8px;
+	font-size: 13px;
+	color: #50575e;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.vm-card .vm-big {
+	font-size: 28px;
+	font-weight: 600;
+	margin: 0;
+	color: #1d2327;
+}
+
+.vm-card small {
+	display: block;
+	color: #646970;
+	margin-top: 4px;
+}
+
+.vm-status {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 10px;
+	font-size: 11px;
+	font-weight: 600;
+	background: #f0f0f1;
+	color: #1d2327;
+}
+
+.vm-status-active {
+	background: #d6f4dc;
+	color: #0a6921;
+}
+
+.vm-status-prospect {
+	background: #fff3cd;
+	color: #8a6d10;
+}
+
+.vm-status-former {
+	background: #e9e9eb;
+	color: #50575e;
+}
+
+.vm-bar-chart {
+	display: flex;
+	gap: 16px;
+	align-items: flex-end;
+	height: 220px;
+	padding: 16px;
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+}
+
+.vm-bar {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-end;
+	height: 100%;
+}
+
+.vm-bar-fill {
+	width: 60%;
+	min-height: 2px;
+	background: #2271b1;
+	border-radius: 4px 4px 0 0;
+	transition: height 0.4s ease;
+}
+
+.vm-bar-label {
+	margin-top: 8px;
+	font-size: 12px;
+	text-align: center;
+	color: #50575e;
+}
+
+.vm-form .form-table th {
+	width: 220px;
+}
+
+.vm-inline-form {
+	display: inline-flex;
+	gap: 8px;
+	align-items: center;
+	margin: 8px 12px 8px 0;
+	padding: 12px;
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+}
+
+.vm-checkbox-grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 220px, 1fr ) );
+	gap: 6px 16px;
+	margin: 12px 0 24px;
+}
+
+.vm-checkbox-grid label {
+	display: block;
+}
