@@ -22,14 +22,6 @@ class VM_Activator {
 		VM_Roles::add_roles();
 		self::set_default_options();
 		self::schedule_cron();
-
-		VM_Central_Logger::log(
-			'plugin_activated',
-			[
-				'wp_version'  => get_bloginfo( 'version' ),
-				'php_version' => PHP_VERSION,
-			]
-		);
 	}
 
 	/**

@@ -90,7 +90,7 @@ class VM_Members_List_Table extends WP_List_Table {
 			case 'membership_type':
 				return 'reduced' === $item['membership_type'] ? esc_html__( 'Reduziert', 'vereinsmanager' ) : esc_html__( 'Standard', 'vereinsmanager' );
 			case 'entry_date':
-				return $item['entry_date'] ? esc_html( mysql2date( get_option( 'date_format' ), $item['entry_date'] ) ) : '—';
+				return $item['entry_date'] ? esc_html( mysql2date( 'd.m.Y', $item['entry_date'] ) ) : '—';
 			default:
 				return '';
 		}

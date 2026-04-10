@@ -198,19 +198,9 @@ class VM_Payments {
 				]
 			);
 
-			VM_Central_Logger::log(
-				'payment_created',
-				[
-					'member_id' => (int) $member['id'],
-					'year'      => $year,
-					'amount'    => $amount,
-				]
-			);
-
 			++$count;
 		}
 
-		VM_Central_Logger::log( 'fees_generated', [ 'year' => $year, 'count' => $count ] );
 		return $count;
 	}
 
@@ -264,8 +254,6 @@ class VM_Payments {
 			[ 'id' => $id ]
 		);
 
-		VM_Central_Logger::log( 'payment_status_changed', [ 'payment_id' => $id, 'new_status' => 'paid' ] );
-
 		$year = isset( $_GET['year'] ) ? (int) $_GET['year'] : (int) gmdate( 'Y' );
 		wp_safe_redirect(
 			add_query_arg(
@@ -300,7 +288,6 @@ class VM_Payments {
 		);
 
 		$club_name = (string) get_option( 'vm_club_name', '' );
-		$total     = 0.0;
 
 		nocache_headers();
 		header( 'Content-Type: text/csv; charset=utf-8' );
@@ -325,7 +312,6 @@ class VM_Payments {
 		foreach ( $rows as $row ) {
 			$holder = $row['bank_account_holder'] ?: trim( ( $row['first_name'] ?? '' ) . ' ' . ( $row['last_name'] ?? '' ) );
 			$amount = number_format( (float) $row['amount'], 2, ',', '' );
-			$total += (float) $row['amount'];
 
 			fputcsv(
 				$out,
@@ -341,14 +327,6 @@ class VM_Payments {
 			);
 		}
 		fclose( $out );
-
-		VM_Central_Logger::log(
-			'sepa_export',
-			[
-				'count'        => count( $rows ),
-				'total_amount' => $total,
-			]
-		);
 
 		exit;
 	}

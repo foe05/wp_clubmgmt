@@ -61,7 +61,7 @@ defined( 'ABSPATH' ) || exit;
 					<tr>
 						<td><?php echo esc_html( VM_Members::format_name( $m ) ); ?></td>
 						<td><?php echo esc_html( $m['member_number'] ?: '—' ); ?></td>
-						<td><?php echo esc_html( (string) $m['exit_date'] ); ?></td>
+						<td><?php echo esc_html( $m['exit_date'] ? mysql2date( 'd.m.Y', $m['exit_date'] ) : '—' ); ?></td>
 						<td>
 							<a href="<?php echo esc_url( $export_url ); ?>" class="button button-small"><?php esc_html_e( 'Datenauskunft', 'vereinsmanager' ); ?></a>
 							<?php if ( current_user_can( 'vm_delete_members' ) ) : ?>

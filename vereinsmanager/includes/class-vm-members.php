@@ -177,16 +177,6 @@ class VM_Members {
 				return new WP_Error( 'vm_db_error', __( 'Datenbankfehler beim Speichern.', 'vereinsmanager' ) );
 			}
 
-			$changed = array_keys( array_diff_assoc( $sanitized, $existing ) );
-
-			VM_Central_Logger::log(
-				'member_updated',
-				[
-					'member_id'      => $id,
-					'changed_fields' => $changed,
-				]
-			);
-
 			if ( $old_status !== $new_status ) {
 				self::log_status_change( $id, $old_status, $new_status );
 			}
@@ -245,17 +235,6 @@ class VM_Members {
 				'user_id'    => get_current_user_id(),
 			]
 		);
-
-		if ( null !== $old_status ) {
-			VM_Central_Logger::log(
-				'member_status_changed',
-				[
-					'member_id'  => $member_id,
-					'old_status' => $old_status,
-					'new_status' => $new_status,
-				]
-			);
-		}
 	}
 
 	/**
@@ -351,7 +330,13 @@ class VM_Members {
 		if ( '' === $value ) {
 			return null;
 		}
-		return preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ? $value : null;
+		if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ) {
+			return $value;
+		}
+		if ( preg_match( '/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/', $value, $m ) ) {
+			return sprintf( '%04d-%02d-%02d', (int) $m[3], (int) $m[2], (int) $m[1] );
+		}
+		return null;
 	}
 
 	/**
@@ -375,7 +360,6 @@ class VM_Members {
 		global $wpdb;
 		$result = $wpdb->delete( self::table(), [ 'id' => $id ] );
 		if ( $result ) {
-			VM_Central_Logger::log( 'member_deleted', [ 'member_id' => $id ] );
 			do_action( 'vm_member_deleted', $id );
 			return true;
 		}

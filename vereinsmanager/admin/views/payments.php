@@ -93,7 +93,7 @@ defined( 'ABSPATH' ) || exit;
 						<td><?php echo esc_html( number_format( (float) $p['amount'], 2, ',', '.' ) ); ?> €</td>
 						<td><?php echo esc_html( $p['payment_method'] ); ?></td>
 						<td><?php echo esc_html( $p['status'] ); ?></td>
-						<td><?php echo $p['payment_date'] ? esc_html( mysql2date( get_option( 'date_format' ), $p['payment_date'] ) ) : '—'; ?></td>
+						<td><?php echo $p['payment_date'] ? esc_html( mysql2date( 'd.m.Y', $p['payment_date'] ) ) : '—'; ?></td>
 						<td>
 							<?php if ( 'open' === $p['status'] ) :
 								$url = wp_nonce_url(

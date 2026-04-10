@@ -171,6 +171,9 @@ class VM_PDF {
 		$club_tax       = (string) get_option( 'vm_club_tax_number', '' );
 		$club_office    = (string) get_option( 'vm_club_tax_office', '' );
 		$exemption_date = (string) get_option( 'vm_club_exemption_date', '' );
+		if ( $exemption_date ) {
+			$exemption_date = mysql2date( 'd.m.Y', $exemption_date );
+		}
 
 		$pdf = new TCPDF( 'P', 'mm', 'A4', true, 'UTF-8', false );
 		$pdf->SetCreator( 'Vereinsmanager' );
@@ -242,7 +245,7 @@ class VM_PDF {
 		);
 		$pdf->Ln( 10 );
 
-		$pdf->Cell( 0, 6, trim( $club_city . ', ' . wp_date( get_option( 'date_format' ) ) ), 0, 1 );
+		$pdf->Cell( 0, 6, trim( $club_city . ', ' . wp_date( 'd.m.Y' ) ), 0, 1 );
 		$pdf->Ln( 12 );
 		$pdf->Cell( 0, 6, '_______________________________', 0, 1 );
 		$pdf->Cell( 0, 5, 'Unterschrift / Vorstand', 0, 1 );
@@ -257,25 +260,138 @@ class VM_PDF {
 			'L'
 		);
 
-		VM_Central_Logger::log(
-			'donation_receipt_generated',
-			[
-				'member_id' => $member_id,
-				'year'      => $year,
-			]
-		);
-
 		return $pdf->Output( 'donation.pdf', 'S' );
 	}
 
 	/**
-	 * Sehr einfache "in Worten" Darstellung (Float -> Text).
+	 * Betrag in deutscher Wortform (z. B. 120,50 -> "Einhundertzwanzig Euro und fünfzig Cent").
 	 *
-	 * @param float $amount Betrag.
+	 * @param float $amount Betrag in Euro.
 	 * @return string
 	 */
 	private static function amount_in_words( float $amount ): string {
-		// Vereinfachte Variante: numerischer Text mit "Euro".
-		return number_format( $amount, 2, ',', '.' ) . ' Euro';
+		$total_cents = (int) round( $amount * 100 );
+		if ( $total_cents < 0 ) {
+			return 'minus ' . self::amount_in_words( -$amount );
+		}
+		$euros = intdiv( $total_cents, 100 );
+		$cents = $total_cents % 100;
+
+		$euro_words = ucfirst( self::number_to_german_words( $euros ) ) . ' Euro';
+		if ( 0 === $cents ) {
+			return $euro_words;
+		}
+		return $euro_words . ' und ' . self::number_to_german_words( $cents ) . ' Cent';
+	}
+
+	/**
+	 * Ganze Zahl in deutsche Wortform umwandeln (0 bis < 1 Billion).
+	 *
+	 * @param int $n Nicht-negative Ganzzahl.
+	 * @return string
+	 */
+	private static function number_to_german_words( int $n ): string {
+		if ( $n < 0 ) {
+			return 'minus ' . self::number_to_german_words( -$n );
+		}
+		if ( 0 === $n ) {
+			return 'null';
+		}
+
+		$parts = [];
+
+		if ( $n >= 1_000_000_000 ) {
+			$billions = intdiv( $n, 1_000_000_000 );
+			$n        = $n % 1_000_000_000;
+			$parts[]  = 1 === $billions
+				? 'eine Milliarde'
+				: self::number_to_german_words( $billions ) . ' Milliarden';
+		}
+
+		if ( $n >= 1_000_000 ) {
+			$millions = intdiv( $n, 1_000_000 );
+			$n        = $n % 1_000_000;
+			$parts[]  = 1 === $millions
+				? 'eine Million'
+				: self::number_to_german_words( $millions ) . ' Millionen';
+		}
+
+		$under_million = '';
+		if ( $n >= 1000 ) {
+			$thousands      = intdiv( $n, 1000 );
+			$n              = $n % 1000;
+			$under_million .= self::below_thousand_words( $thousands ) . 'tausend';
+		}
+		if ( $n > 0 ) {
+			$under_million .= self::below_thousand_words( $n );
+		}
+		if ( '' !== $under_million ) {
+			$parts[] = $under_million;
+		}
+
+		return implode( ' ', $parts );
+	}
+
+	/**
+	 * Zahl 1..999 in deutsche Wortform (zusammengeschrieben).
+	 *
+	 * @param int $n Zahl zwischen 1 und 999.
+	 * @return string
+	 */
+	private static function below_thousand_words( int $n ): string {
+		$ones = [
+			1 => 'ein',
+			2 => 'zwei',
+			3 => 'drei',
+			4 => 'vier',
+			5 => 'fünf',
+			6 => 'sechs',
+			7 => 'sieben',
+			8 => 'acht',
+			9 => 'neun',
+		];
+		$teens = [
+			10 => 'zehn',
+			11 => 'elf',
+			12 => 'zwölf',
+			13 => 'dreizehn',
+			14 => 'vierzehn',
+			15 => 'fünfzehn',
+			16 => 'sechzehn',
+			17 => 'siebzehn',
+			18 => 'achtzehn',
+			19 => 'neunzehn',
+		];
+		$tens = [
+			2 => 'zwanzig',
+			3 => 'dreißig',
+			4 => 'vierzig',
+			5 => 'fünfzig',
+			6 => 'sechzig',
+			7 => 'siebzig',
+			8 => 'achtzig',
+			9 => 'neunzig',
+		];
+
+		$out = '';
+		if ( $n >= 100 ) {
+			$h    = intdiv( $n, 100 );
+			$n    = $n % 100;
+			$out .= $ones[ $h ] . 'hundert';
+		}
+		if ( $n >= 20 ) {
+			$t = intdiv( $n, 10 );
+			$u = $n % 10;
+			if ( $u > 0 ) {
+				$out .= $ones[ $u ] . 'und' . $tens[ $t ];
+			} else {
+				$out .= $tens[ $t ];
+			}
+		} elseif ( $n >= 10 ) {
+			$out .= $teens[ $n ];
+		} elseif ( $n > 0 ) {
+			$out .= $ones[ $n ];
+		}
+		return $out;
 	}
 }

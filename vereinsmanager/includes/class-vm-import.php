@@ -184,15 +184,6 @@ class VM_Import {
 			}
 		}
 
-		VM_Central_Logger::log(
-			'csv_import',
-			[
-				'imported' => $imported,
-				'skipped'  => $skipped,
-				'errors'   => $errors,
-			]
-		);
-
 		if ( ! $dry_run ) {
 			delete_transient( 'vm_import_preview_' . get_current_user_id() );
 		}

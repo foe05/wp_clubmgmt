@@ -96,8 +96,6 @@ class VM_GDPR {
 			ARRAY_A
 		);
 
-		VM_Central_Logger::log( 'gdpr_data_export', [ 'member_id' => $id ] );
-
 		nocache_headers();
 		header( 'Content-Type: text/html; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename="datenauskunft-' . $id . '.html"' );
@@ -108,10 +106,19 @@ class VM_GDPR {
 		echo '<h1>' . esc_html__( 'Datenauskunft gemäß Art. 15 DSGVO', 'vereinsmanager' ) . '</h1>';
 		echo '<p>' . esc_html__( 'Stand:', 'vereinsmanager' ) . ' ' . esc_html( wp_date( 'd.m.Y H:i' ) ) . '</p>';
 
+		$date_fields     = [ 'date_of_birth', 'entry_date', 'exit_date', 'sepa_mandate_date', 'consent_data_processing_date', 'consent_email_date' ];
+		$datetime_fields = [ 'created_at', 'updated_at' ];
+
 		echo '<h2>' . esc_html__( 'Stammdaten', 'vereinsmanager' ) . '</h2>';
 		echo '<table>';
 		foreach ( $member as $key => $value ) {
-			echo '<tr><th>' . esc_html( $key ) . '</th><td>' . esc_html( (string) $value ) . '</td></tr>';
+			$display = (string) $value;
+			if ( $display && in_array( $key, $date_fields, true ) ) {
+				$display = mysql2date( 'd.m.Y', $display );
+			} elseif ( $display && in_array( $key, $datetime_fields, true ) ) {
+				$display = mysql2date( 'd.m.Y H:i', $display );
+			}
+			echo '<tr><th>' . esc_html( $key ) . '</th><td>' . esc_html( $display ) . '</td></tr>';
 		}
 		echo '</table>';
 
@@ -119,7 +126,8 @@ class VM_GDPR {
 		if ( $payments ) {
 			echo '<table><tr><th>Jahr</th><th>Betrag</th><th>Status</th><th>Datum</th><th>Methode</th></tr>';
 			foreach ( $payments as $p ) {
-				echo '<tr><td>' . (int) $p['year'] . '</td><td>' . esc_html( $p['amount'] ) . '</td><td>' . esc_html( $p['status'] ) . '</td><td>' . esc_html( (string) $p['payment_date'] ) . '</td><td>' . esc_html( $p['payment_method'] ) . '</td></tr>';
+				$pay_date = $p['payment_date'] ? mysql2date( 'd.m.Y', (string) $p['payment_date'] ) : '—';
+				echo '<tr><td>' . (int) $p['year'] . '</td><td>' . esc_html( $p['amount'] ) . '</td><td>' . esc_html( $p['status'] ) . '</td><td>' . esc_html( $pay_date ) . '</td><td>' . esc_html( $p['payment_method'] ) . '</td></tr>';
 			}
 			echo '</table>';
 		} else {
@@ -130,7 +138,8 @@ class VM_GDPR {
 		if ( $emails ) {
 			echo '<table><tr><th>ID</th><th>Betreff</th><th>Gesendet</th><th>Status</th></tr>';
 			foreach ( $emails as $e ) {
-				echo '<tr><td>' . (int) $e['id'] . '</td><td>' . esc_html( (string) $e['subject'] ) . '</td><td>' . esc_html( (string) $e['sent_at'] ) . '</td><td>' . esc_html( $e['status'] ) . '</td></tr>';
+				$sent = $e['sent_at'] ? mysql2date( 'd.m.Y H:i', (string) $e['sent_at'] ) : '—';
+				echo '<tr><td>' . (int) $e['id'] . '</td><td>' . esc_html( (string) $e['subject'] ) . '</td><td>' . esc_html( $sent ) . '</td><td>' . esc_html( $e['status'] ) . '</td></tr>';
 			}
 			echo '</table>';
 		} else {
@@ -184,8 +193,6 @@ class VM_GDPR {
 			],
 			[ 'id' => $id ]
 		);
-
-		VM_Central_Logger::log( 'gdpr_anonymized', [ 'member_id' => $id ] );
 
 		wp_safe_redirect(
 			add_query_arg(

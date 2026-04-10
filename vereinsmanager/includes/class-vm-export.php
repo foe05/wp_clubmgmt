@@ -112,16 +112,19 @@ class VM_Export {
 		}
 		fputcsv( $out, $header, ';' );
 
+		$date_fields = [ 'date_of_birth', 'entry_date', 'exit_date' ];
 		foreach ( $result['items'] as $member ) {
 			$row = [];
 			foreach ( $fields as $f ) {
-				$row[] = (string) ( $member[ $f ] ?? '' );
+				$value = (string) ( $member[ $f ] ?? '' );
+				if ( $value && in_array( $f, $date_fields, true ) ) {
+					$value = mysql2date( 'd.m.Y', $value );
+				}
+				$row[] = $value;
 			}
 			fputcsv( $out, $row, ';' );
 		}
 		fclose( $out );
-
-		VM_Central_Logger::log( 'csv_export', [ 'count' => count( $result['items'] ) ] );
 
 		exit;
 	}
