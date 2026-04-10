@@ -1,5 +1,7 @@
 # wp_clubmgmt – Vereinsmanager
 
+**Version:** 26.1.0-rc.1
+
 WordPress-Plugin **Vereinsmanager** zur vollständigen Verwaltung gemeinnütziger
 Fördervereine direkt im WordPress-Admin.
 
@@ -21,8 +23,9 @@ Fördervereine direkt im WordPress-Admin.
   Aufbewahrungs­fristen.
 - **Dashboard** – Kennzahlen, Beitrags-Übersicht, Mitglieder­entwicklung der
   letzten 5 Jahre.
-- **Zentrales Logging** – Fire-and-forget Versand wichtiger Events an
-  `log.broetzens.de` (BroetzensTools Central Logging), ohne PII.
+- **Zentrales Logging** – Fire-and-forget Versand an `log.broetzens.de`
+  (BroetzensTools Central Logging), ohne PII. Übertragen werden nur die
+  Events `plugin_error`, `member_created` und `email_sent`.
 
 ## Installation
 
@@ -45,6 +48,25 @@ Fördervereine direkt im WordPress-Admin.
 - `vm_admin` (Vereinsverwalter) – Vollzugriff
 - `vm_board_member` (Vorstandsmitglied) – Mitglieder, E-Mails, Dashboard
 - WordPress `administrator` erhält automatisch alle Capabilities
+
+## Datumsformat
+
+Alle sichtbaren Datumsfelder (Mitgliederliste, Zahlungen, DSGVO-Auskunft,
+CSV-Export, Zuwendungsbestätigung) werden im deutschen Format `TT.MM.JJJJ`
+ausgegeben. Intern speichert das Plugin weiterhin ISO-Datumswerte
+(`JJJJ-MM-TT`); beim CSV-Import werden sowohl `JJJJ-MM-TT` als auch
+`TT.MM.JJJJ` akzeptiert.
+
+## Changelog
+
+### 26.1.0-rc.1
+- Alle Datumsausgaben auf deutsches Format `TT.MM.JJJJ` umgestellt.
+- CSV-Import akzeptiert zusätzlich `TT.MM.JJJJ`.
+- Zentrales Logging auf die drei Kern-Events `plugin_error`,
+  `member_created` und `email_sent` reduziert.
+
+### 1.0.0
+- Initiales Release.
 
 ## Lizenz
 

@@ -3,7 +3,7 @@
  * Plugin Name:       Vereinsmanager
  * Plugin URI:        https://github.com/foe05/wp_clubmgmt
  * Description:       Vollständige Vereinsverwaltung für gemeinnützige Fördervereine: CRM, Beiträge, SEPA, Zuwendungsbestätigungen, E-Mails, DSGVO und Dashboard.
- * Version:           1.0.0
+ * Version:           26.1.0-rc.1
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Author:            BroetzensTools
@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin-Konstanten.
  */
-define( 'VM_VERSION', '1.0.0' );
+define( 'VM_VERSION', '26.1.0-rc.1' );
 define( 'VM_PLUGIN_FILE', __FILE__ );
 define( 'VM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
