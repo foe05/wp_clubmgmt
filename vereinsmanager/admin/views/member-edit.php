@@ -218,4 +218,67 @@ $get  = function ( $key, $default = '' ) use ( $m ) {
 			<a href="<?php echo esc_url( admin_url( 'admin.php?page=vm-members' ) ); ?>"><?php esc_html_e( '« zurück zur Liste', 'vereinsmanager' ); ?></a>
 		</p>
 	</form>
+
+	<?php if ( $is_edit && class_exists( 'VM_Member_Roles' ) ) :
+		$roles = VM_Member_Roles::for_member( (int) $m['id'] );
+		?>
+		<hr />
+		<h2><?php esc_html_e( 'Ämter / Funktionen', 'vereinsmanager' ); ?></h2>
+
+		<?php if ( empty( $roles ) ) : ?>
+			<p><?php esc_html_e( 'Keine Ämter zugewiesen.', 'vereinsmanager' ); ?></p>
+		<?php else : ?>
+			<table class="widefat striped">
+				<thead>
+					<tr>
+						<th><?php esc_html_e( 'Amt', 'vereinsmanager' ); ?></th>
+						<th><?php esc_html_e( 'Bezeichnung', 'vereinsmanager' ); ?></th>
+						<th><?php esc_html_e( 'Von', 'vereinsmanager' ); ?></th>
+						<th><?php esc_html_e( 'Bis', 'vereinsmanager' ); ?></th>
+						<th><?php esc_html_e( 'Aktion', 'vereinsmanager' ); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ( $roles as $r ) :
+						$end_url = wp_nonce_url(
+							add_query_arg(
+								[ 'action' => 'vm_member_role_end', 'role_id' => $r['id'], 'member_id' => $m['id'] ],
+								admin_url( 'admin-post.php' )
+							),
+							'vm_member_role_end_' . $r['id']
+						);
+						?>
+						<tr>
+							<td><code><?php echo esc_html( (string) $r['role_key'] ); ?></code></td>
+							<td><?php echo esc_html( (string) $r['role_label'] ); ?></td>
+							<td><?php echo esc_html( (string) $r['start_date'] ); ?></td>
+							<td><?php echo $r['end_date'] ? esc_html( (string) $r['end_date'] ) : '<em>' . esc_html__( 'aktiv', 'vereinsmanager' ) . '</em>'; ?></td>
+							<td>
+								<?php if ( ! $r['end_date'] ) : ?>
+									<a href="<?php echo esc_url( $end_url ); ?>" class="button button-small"><?php esc_html_e( 'Beenden', 'vereinsmanager' ); ?></a>
+								<?php endif; ?>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif; ?>
+
+		<h3><?php esc_html_e( 'Neues Amt hinzufügen', 'vereinsmanager' ); ?></h3>
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="vm-inline-form">
+			<input type="hidden" name="action" value="vm_member_role_add" />
+			<input type="hidden" name="member_id" value="<?php echo (int) $m['id']; ?>" />
+			<?php wp_nonce_field( 'vm_member_role_add' ); ?>
+			<label><?php esc_html_e( 'Key', 'vereinsmanager' ); ?>
+				<input type="text" name="role_key" placeholder="vorstand" required />
+			</label>
+			<label><?php esc_html_e( 'Bezeichnung', 'vereinsmanager' ); ?>
+				<input type="text" name="role_label" placeholder="1. Vorsitzender" />
+			</label>
+			<label><?php esc_html_e( 'Start', 'vereinsmanager' ); ?>
+				<input type="date" name="start_date" value="<?php echo esc_attr( current_time( 'Y-m-d' ) ); ?>" />
+			</label>
+			<?php submit_button( __( 'Hinzufügen', 'vereinsmanager' ), 'secondary', '', false ); ?>
+		</form>
+	<?php endif; ?>
 </div>

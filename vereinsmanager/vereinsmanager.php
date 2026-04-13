@@ -41,6 +41,7 @@ require_once VM_PLUGIN_DIR . 'includes/class-vm-roles.php';
 require_once VM_PLUGIN_DIR . 'includes/class-vm-activator.php';
 require_once VM_PLUGIN_DIR . 'includes/class-vm-deactivator.php';
 require_once VM_PLUGIN_DIR . 'includes/class-vm-members.php';
+require_once VM_PLUGIN_DIR . 'includes/class-vm-member-roles.php';
 require_once VM_PLUGIN_DIR . 'includes/class-vm-payments.php';
 require_once VM_PLUGIN_DIR . 'includes/class-vm-email.php';
 require_once VM_PLUGIN_DIR . 'includes/class-vm-import.php';
@@ -49,6 +50,12 @@ require_once VM_PLUGIN_DIR . 'includes/class-vm-pdf.php';
 require_once VM_PLUGIN_DIR . 'includes/class-vm-gdpr.php';
 require_once VM_PLUGIN_DIR . 'includes/class-vm-dashboard.php';
 require_once VM_PLUGIN_DIR . 'includes/class-vm-settings.php';
+require_once VM_PLUGIN_DIR . 'includes/class-vm-events.php';
+require_once VM_PLUGIN_DIR . 'includes/class-vm-event-attendees.php';
+require_once VM_PLUGIN_DIR . 'includes/class-vm-event-frontend.php';
+require_once VM_PLUGIN_DIR . 'includes/class-vm-event-protocol.php';
+require_once VM_PLUGIN_DIR . 'includes/class-vm-documents.php';
+require_once VM_PLUGIN_DIR . 'includes/class-vm-anniversaries.php';
 
 /**
  * Activation / Deactivation Hooks.
@@ -137,6 +144,58 @@ function vm_admin_menu() {
 
 	add_submenu_page(
 		'vereinsmanager',
+		__( 'Veranstaltungen', 'vereinsmanager' ),
+		__( 'Veranstaltungen', 'vereinsmanager' ),
+		'vm_view_events',
+		'vm-events',
+		[ 'VM_Events', 'render_list' ]
+	);
+
+	// Versteckte Unterseiten für Events.
+	add_submenu_page(
+		null,
+		__( 'Veranstaltung bearbeiten', 'vereinsmanager' ),
+		__( 'Veranstaltung bearbeiten', 'vereinsmanager' ),
+		'vm_view_events',
+		'vm-event-edit',
+		[ 'VM_Events', 'render_edit' ]
+	);
+	add_submenu_page(
+		null,
+		__( 'Teilnehmer', 'vereinsmanager' ),
+		__( 'Teilnehmer', 'vereinsmanager' ),
+		'vm_view_events',
+		'vm-event-attendees',
+		[ 'VM_Events', 'render_attendees' ]
+	);
+	add_submenu_page(
+		null,
+		__( 'Einladungen', 'vereinsmanager' ),
+		__( 'Einladungen', 'vereinsmanager' ),
+		'vm_manage_events',
+		'vm-event-invite',
+		[ 'VM_Events', 'render_invite' ]
+	);
+	add_submenu_page(
+		null,
+		__( 'Protokoll', 'vereinsmanager' ),
+		__( 'Protokoll', 'vereinsmanager' ),
+		'vm_view_events',
+		'vm-event-protocol',
+		[ 'VM_Event_Protocol', 'render' ]
+	);
+
+	add_submenu_page(
+		'vereinsmanager',
+		__( 'Dokumente', 'vereinsmanager' ),
+		__( 'Dokumente', 'vereinsmanager' ),
+		'vm_manage_documents',
+		'vm-documents',
+		[ 'VM_Documents', 'render' ]
+	);
+
+	add_submenu_page(
+		'vereinsmanager',
 		__( 'Import', 'vereinsmanager' ),
 		__( 'Import', 'vereinsmanager' ),
 		'vm_import_data',
@@ -209,12 +268,19 @@ add_action( 'admin_enqueue_scripts', 'vm_admin_assets' );
 function vm_register_handlers() {
 	VM_Settings::register();
 	VM_Members::register();
+	VM_Member_Roles::register();
 	VM_Payments::register();
 	VM_Email::register();
 	VM_Import::register();
 	VM_Export::register();
 	VM_PDF::register();
 	VM_GDPR::register();
+	VM_Events::register();
+	VM_Event_Attendees::register();
+	VM_Event_Frontend::register();
+	VM_Event_Protocol::register();
+	VM_Documents::register();
+	VM_Anniversaries::register();
 }
 add_action( 'init', 'vm_register_handlers' );
 

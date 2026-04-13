@@ -27,6 +27,9 @@ class VM_Roles {
 			'vm_export_data',
 			'vm_import_data',
 			'vm_delete_members',
+			'vm_manage_events',
+			'vm_view_events',
+			'vm_manage_documents',
 		];
 	}
 
@@ -50,6 +53,8 @@ class VM_Roles {
 			'vm_view_members',
 			'vm_manage_finances',
 			'vm_send_emails',
+			'vm_manage_events',
+			'vm_view_events',
 		];
 	}
 

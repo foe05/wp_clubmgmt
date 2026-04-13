@@ -18,6 +18,12 @@ $tables = [
 	$wpdb->prefix . 'vm_email_log',
 	$wpdb->prefix . 'vm_email_queue',
 	$wpdb->prefix . 'vm_status_log',
+	$wpdb->prefix . 'vm_events',
+	$wpdb->prefix . 'vm_event_attendees',
+	$wpdb->prefix . 'vm_event_agenda',
+	$wpdb->prefix . 'vm_event_protocols',
+	$wpdb->prefix . 'vm_member_roles',
+	$wpdb->prefix . 'vm_documents',
 ];
 
 foreach ( $tables as $table ) {
@@ -43,6 +49,10 @@ $options = [
 	'vm_logging_api_url',
 	'vm_logging_api_key',
 	'vm_logging_enabled',
+	'vm_mv_ladungsfrist_days',
+	'vm_board_role_keys',
+	'vm_anniversary_notify',
+	'vm_anniversary_days_ahead',
 ];
 
 foreach ( $options as $option ) {
@@ -62,6 +72,9 @@ $capabilities = [
 	'vm_export_data',
 	'vm_import_data',
 	'vm_delete_members',
+	'vm_manage_events',
+	'vm_view_events',
+	'vm_manage_documents',
 ];
 
 $administrator = get_role( 'administrator' );
@@ -75,4 +88,8 @@ if ( $administrator ) {
 $timestamp = wp_next_scheduled( 'vm_process_email_queue' );
 if ( $timestamp ) {
 	wp_unschedule_event( $timestamp, 'vm_process_email_queue' );
+}
+$anniv_ts = wp_next_scheduled( 'vm_anniversary_daily' );
+if ( $anniv_ts ) {
+	wp_unschedule_event( $anniv_ts, 'vm_anniversary_daily' );
 }

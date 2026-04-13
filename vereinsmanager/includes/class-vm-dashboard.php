@@ -30,7 +30,35 @@ class VM_Dashboard {
 		$sepa_count    = self::count_active_sepa();
 		$years         = self::members_per_year( 5 );
 
+		$upcoming_events = self::upcoming_events( 5 );
+		$upcoming_bds    = class_exists( 'VM_Anniversaries' ) ? VM_Anniversaries::upcoming_birthdays( 30 ) : [];
+		$upcoming_jubs   = class_exists( 'VM_Anniversaries' ) ? VM_Anniversaries::upcoming_anniversaries( 30 ) : [];
+
 		include VM_PLUGIN_DIR . 'admin/views/dashboard.php';
+	}
+
+	/**
+	 * Nächste Veranstaltungen.
+	 *
+	 * @param int $limit Anzahl.
+	 * @return array
+	 */
+	public static function upcoming_events( int $limit = 5 ): array {
+		if ( ! class_exists( 'VM_Events' ) ) {
+			return [];
+		}
+		global $wpdb;
+		$table = VM_Events::table();
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$table} WHERE status = 'published' AND start_datetime >= %s ORDER BY start_datetime ASC LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				current_time( 'mysql' ),
+				$limit
+			),
+			ARRAY_A
+		);
+		return $rows ?: [];
 	}
 
 	/**

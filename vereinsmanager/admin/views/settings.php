@@ -81,6 +81,38 @@ defined( 'ABSPATH' ) || exit;
 			</tr>
 		</table>
 
+		<h2><?php esc_html_e( 'Veranstaltungen & Ämter', 'vereinsmanager' ); ?></h2>
+		<table class="form-table" role="presentation">
+			<tr>
+				<th scope="row"><label for="vm_mv_ladungsfrist_days"><?php esc_html_e( 'Ladungsfrist Mitgliederversammlung (Tage)', 'vereinsmanager' ); ?></label></th>
+				<td><input name="vm_mv_ladungsfrist_days" id="vm_mv_ladungsfrist_days" type="number" min="0" class="small-text" value="<?php echo esc_attr( get_option( 'vm_mv_ladungsfrist_days', '14' ) ); ?>" /></td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="vm_board_role_keys"><?php esc_html_e( 'Vorstandsrollen-Keys (kommasepariert)', 'vereinsmanager' ); ?></label></th>
+				<td>
+					<input name="vm_board_role_keys" id="vm_board_role_keys" type="text" class="regular-text" value="<?php echo esc_attr( get_option( 'vm_board_role_keys', 'vorstand,vorsitz,kassenwart,schriftfuehrer' ) ); ?>" />
+					<p class="description"><?php esc_html_e( 'Rollen-Keys, deren Inhaber beim Einladungstyp "Vorstand" angeschrieben werden.', 'vereinsmanager' ); ?></p>
+				</td>
+			</tr>
+		</table>
+
+		<h2><?php esc_html_e( 'Jubiläen / Geburtstage', 'vereinsmanager' ); ?></h2>
+		<table class="form-table" role="presentation">
+			<tr>
+				<th scope="row"><label for="vm_anniversary_notify"><?php esc_html_e( 'Tägliche Benachrichtigung', 'vereinsmanager' ); ?></label></th>
+				<td>
+					<select name="vm_anniversary_notify" id="vm_anniversary_notify">
+						<option value="0" <?php selected( get_option( 'vm_anniversary_notify', '0' ), '0' ); ?>><?php esc_html_e( 'Nein', 'vereinsmanager' ); ?></option>
+						<option value="1" <?php selected( get_option( 'vm_anniversary_notify', '0' ), '1' ); ?>><?php esc_html_e( 'Ja', 'vereinsmanager' ); ?></option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="vm_anniversary_days_ahead"><?php esc_html_e( 'Vorschau (Tage)', 'vereinsmanager' ); ?></label></th>
+				<td><input name="vm_anniversary_days_ahead" id="vm_anniversary_days_ahead" type="number" min="0" class="small-text" value="<?php echo esc_attr( get_option( 'vm_anniversary_days_ahead', '30' ) ); ?>" /></td>
+			</tr>
+		</table>
+
 		<h2><?php esc_html_e( 'Zentrales Logging', 'vereinsmanager' ); ?></h2>
 		<table class="form-table" role="presentation">
 			<tr>

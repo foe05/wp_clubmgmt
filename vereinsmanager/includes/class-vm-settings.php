@@ -36,6 +36,10 @@ class VM_Settings {
 			'vm_logging_api_url'      => 'esc_url_raw',
 			'vm_logging_api_key'      => 'sanitize_text_field',
 			'vm_logging_enabled'      => 'sanitize_text_field',
+			'vm_mv_ladungsfrist_days' => 'absint',
+			'vm_board_role_keys'      => 'sanitize_text_field',
+			'vm_anniversary_notify'   => 'sanitize_text_field',
+			'vm_anniversary_days_ahead' => 'absint',
 		];
 	}
 

@@ -25,5 +25,9 @@ class VM_Deactivator {
 		if ( $timestamp ) {
 			wp_unschedule_event( $timestamp, 'vm_process_email_queue' );
 		}
+		$anniv_ts = wp_next_scheduled( 'vm_anniversary_daily' );
+		if ( $anniv_ts ) {
+			wp_unschedule_event( $anniv_ts, 'vm_anniversary_daily' );
+		}
 	}
 }

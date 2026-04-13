@@ -59,6 +59,59 @@ $max = max( max( array_values( $years ) ), 1 );
 		</div>
 	</div>
 
+	<?php if ( ! empty( $upcoming_events ) ) : ?>
+		<h2><?php esc_html_e( 'Nächste Veranstaltungen', 'vereinsmanager' ); ?></h2>
+		<table class="widefat striped">
+			<thead>
+				<tr>
+					<th><?php esc_html_e( 'Titel', 'vereinsmanager' ); ?></th>
+					<th><?php esc_html_e( 'Typ', 'vereinsmanager' ); ?></th>
+					<th><?php esc_html_e( 'Datum', 'vereinsmanager' ); ?></th>
+					<th><?php esc_html_e( 'Ort', 'vereinsmanager' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php $types = VM_Events::types(); foreach ( $upcoming_events as $ev ) : ?>
+					<tr>
+						<td><a href="<?php echo esc_url( admin_url( 'admin.php?page=vm-event-edit&id=' . (int) $ev['id'] ) ); ?>"><?php echo esc_html( (string) $ev['title'] ); ?></a></td>
+						<td><?php echo esc_html( $types[ $ev['event_type'] ] ?? $ev['event_type'] ); ?></td>
+						<td><?php echo esc_html( mysql2date( 'd.m.Y H:i', $ev['start_datetime'] ) ); ?></td>
+						<td><?php echo esc_html( (string) $ev['location'] ); ?></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	<?php endif; ?>
+
+	<?php if ( ! empty( $upcoming_bds ) || ! empty( $upcoming_jubs ) ) : ?>
+		<div class="vm-cards">
+			<?php if ( ! empty( $upcoming_bds ) ) : ?>
+				<div class="vm-card vm-card-wide">
+					<h3><?php esc_html_e( 'Bevorstehende Geburtstage (30 Tage)', 'vereinsmanager' ); ?></h3>
+					<ul>
+						<?php foreach ( array_slice( $upcoming_bds, 0, 10 ) as $r ) : ?>
+							<li><?php echo esc_html( VM_Members::format_name( $r ) ); ?> – <?php echo esc_html( mysql2date( 'd.m.', $r['next_birthday'] ) ); ?> (<?php echo (int) $r['turning_age']; ?>)</li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+			<?php endif; ?>
+			<?php if ( ! empty( $upcoming_jubs ) ) : ?>
+				<div class="vm-card vm-card-wide">
+					<h3><?php esc_html_e( 'Bevorstehende Mitgliedschaftsjubiläen (30 Tage)', 'vereinsmanager' ); ?></h3>
+					<ul>
+						<?php foreach ( array_slice( $upcoming_jubs, 0, 10 ) as $r ) : ?>
+							<li>
+								<?php echo esc_html( VM_Members::format_name( $r ) ); ?> –
+								<?php echo esc_html( mysql2date( 'd.m.', $r['next_anniversary'] ) ); ?>
+								(<?php echo (int) $r['years']; ?> <?php esc_html_e( 'Jahre', 'vereinsmanager' ); ?><?php echo $r['is_round'] ? ' ⭐' : ''; ?>)
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+			<?php endif; ?>
+		</div>
+	<?php endif; ?>
+
 	<h2><?php esc_html_e( 'Mitgliederentwicklung (letzte 5 Jahre)', 'vereinsmanager' ); ?></h2>
 	<div class="vm-bar-chart">
 		<?php foreach ( $years as $y => $count ) :
